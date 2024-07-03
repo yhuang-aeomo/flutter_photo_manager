@@ -133,16 +133,20 @@ class PermissionsUtils {
             LogUtils.debug("  grantedPermissionsList: $grantedPermissionsList")
 
             if (delegate.isHandlePermissionResult()) {
-                delegate.handlePermissionResult(
-                    this,
-                    context!!,
-                    permissions,
-                    grantResults,
-                    needToRequestPermissionsList,
-                    deniedPermissionsList,
-                    grantedPermissionsList,
-                    requestCode,
-                )
+                if (context == null) {
+                    LogUtils.error("Permissions dealResult Context cannot be null")
+                }else{
+                    delegate.handlePermissionResult(
+                        this,
+                        context!!,
+                        permissions,
+                        grantResults,
+                        needToRequestPermissionsList,
+                        deniedPermissionsList,
+                        grantedPermissionsList,
+                        requestCode,
+                    )
+                }
             } else {
                 if (deniedPermissionsList.isNotEmpty()) {
                     // 回调用户拒绝监听
@@ -200,11 +204,18 @@ class PermissionsUtils {
     }
 
     fun presentLimited(type: Int, resultHandler: ResultHandler) {
+        if (context == null) {
+            LogUtils.error("Permissions presentLimited Context cannot be null")
+            return
+        }
         delegate.presentLimited(this, context!!, type, resultHandler)
     }
 
     fun getAuthValue(requestType: Int, mediaLocation: Boolean): PermissionResult {
+        if (context == null) {
+            LogUtils.error("Permissions getAuthValue Context cannot be null")
+            return PermissionResult.NotDetermined
+        }
         return delegate.getAuthValue(context!!, requestType, mediaLocation)
     }
-
 }
